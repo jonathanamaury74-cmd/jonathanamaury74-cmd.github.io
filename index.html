@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema COPACI</title>
+    <!-- Hoja de estilos externa para tipografía y diseño -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ================= PANTALLA DE LOGIN ================= -->
+    <div id="login-screen" class="login-screen fade-in">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>Sistema COPACI</h1>
+                <p>Plataforma Institucional</p>
+            </div>
+
+            <!-- Selector de modo de acceso -->
+            <div class="access-types">
+                <button type="button" class="tab-btn active" onclick="setTab('private')">Miembros</button>
+                <button type="button" class="tab-btn" onclick="setTab('public')">Ciudadano (Público)</button>
+            </div>
+
+            <!-- Formulario para Administradores / Copaci -->
+            <form id="form-private" onsubmit="loginPrivado(event)">
+                <div class="form-group">
+                    <label for="username">Usuario:</label>
+                    <input type="text" id="username" placeholder="Ingresa tu usuario">
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-primary">Iniciar Sesión</button>
+            </form>
+
+            <!-- Formulario/Acceso Público para Ciudadano -->
+            <div id="form-public" class="hidden">
+                <p style="margin-bottom: 15px; font-size: 0.9rem; color: var(--text-muted); text-align: center;">
+                    El acceso para ciudadanos es público. No requiere usuario ni contraseña.
+                </p>
+                <button type="button" onclick="loginCiudadano()" class="btn-primary btn-public">Entrar como Ciudadano</button>
+            </div>
+
+            <p id="error-msg" class="error-msg">Credenciales incorrectas. Intenta de nuevo.</p>
+        </div>
+    </div>
+
+    <!-- ================= PANTALLA DEL MENÚ (DASHBOARD) ================= -->
+    <div id="dashboard-screen" class="dashboard-screen">
+        <header>
+            <div class="user-info">
+                <h3 id="user-display-name">Usuario</h3>
+                <span id="user-role-badge" class="user-badge">Rol</span>
+            </div>
+            <button onclick="logout()" class="btn-logout">Cerrar Sesión</button>
+        </header>
+
+        <main class="fade-in">
+            <div class="section-title">
+                <h2>Menú de Opciones</h2>
+                <p>Selecciona la opción a la que deseas acceder</p>
+            </div>
+
+            <!-- Contenedor dinámico de opciones según el diagrama -->
+            <div id="menu-grid" class="menu-grid"></div>
+        </main>
+    </div>
+
+    <!-- ================= LÓGICA Y PERMISOS (JS) ================= -->
+    <script>
+        // 1. Base de datos de Usuarios con credenciales
+        const usuariosRegistrados = [
+            { user: "admin", pass: "admin123", name: "Super Administrador", role: "superadmin" },
+            { user: "copaci", pass: "copaci123", name: "Integrante COPACI", role: "copaci" }
+        ];
+
+        // 2. Diccionario de Casos de Uso del Diagrama con sus iconos
+        const casosDeUso = {
+            nuevasRegistros: { titulo: "Nuevas / Registros", icon: "🆕" },
+            actualizar:       { titulo: "Actualizar", icon: "🔄" },
+            eliminar:         { titulo: "Eliminar", icon: "🗑️" },
+            opiniones:        { titulo: "Opiniones / Comentarios", icon: "💬" },
+            solicitudEventos: { titulo: "Solicitud de eventos", icon: "📅" },
+            avisosComunidad:  { titulo: "Avisos a la comunidad", icon: "📢" },
+            informeAcciones:  { titulo: "Informe de acciones trimestrales", icon: "📊" },
+            tramiteDocs:      { titulo: "Trámite de documentos", icon: "📄" },
+            reportes:         { titulo: "Reportes", icon: "📈" },
+            visuEventos:      { titulo: "Visualización de eventos", icon: "👁️️" },
+            membresia:        { titulo: "Membresía / Anuncios", icon: "🎟️" }
+        };
+
+        // 3. Mapeo exacto de permisos según las líneas del diagrama de la imagen
+        const permisosPorRol = {
+            // Super Administrador se conecta a TODOS los casos de uso
+            superadmin: [
+                "nuevasRegistros", "actualizar", "eliminar", "opiniones", 
+                "solicitudEventos", "avisosComunidad", "informeAcciones", 
+                "tramiteDocs", "reportes", "visuEventos", "membresia"
+            ],
+            // Copaci según sus líneas en el diagrama
+            copaci: [
+                "opiniones", "solicitudEventos", "avisosComunidad", 
+                "informeAcciones", "tramiteDocs", "reportes", 
+                "visuEventos", "membresia"
+            ],
+            // Ciudadano según sus líneas en el diagrama
+            ciudadano: [
+                "opiniones", "solicitudEventos", "tramiteDocs", 
+                "reportes", "visuEventos", "membresia"
+            ]
+        };
+
+        // Cambiar entre pestañas de Login
+        function setTab(type) {
+            const btnPrivate = document.querySelectorAll('.tab-btn')[0];
+            const btnPublic = document.querySelectorAll('.tab-btn')[1];
+            const formPrivate = document.getElementById('form-private');
+            const formPublic = document.getElementById('form-public');
+            const errorMsg = document.getElementById('error-msg');
+
+            errorMsg.style.display = 'none';
+
+            if (type === 'private') {
+                btnPrivate.classList.add('active');
+                btnPublic.classList.remove('active');
+                formPrivate.classList.remove('hidden');
+                formPublic.classList.add('hidden');
+            } else {
+                btnPublic.classList.add('active');
+                btnPrivate.classList.remove('active');
+                formPublic.classList.remove('hidden');
+                formPrivate.classList.add('hidden');
+            }
+        }
+
+        // Login para Administrador y Copaci
+        function loginPrivado(e) {
+            e.preventDefault();
+            const uInput = document.getElementById('username').value.trim();
+            const pInput = document.getElementById('password').value.trim();
+            const errorMsg = document.getElementById('error-msg');
+
+            const encontrado = usuariosRegistrados.find(u => u.user === uInput && u.pass === pInput);
+
+            if (encontrado) {
+                errorMsg.style.display = 'none';
+                cargarDashboard(encontrado.name, encontrado.role);
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        // Login sin contraseña para Ciudadano
+        function loginCiudadano() {
+            cargarDashboard("Ciudadano (Invitado)", "ciudadano");
+        }
+
+        // Mostrar Dashboard y construir el menú dinámico
+        function cargarDashboard(nombre, rol) {
+            document.getElementById('login-screen').style.display = 'none';
+            const dash = document.getElementById('dashboard-screen');
+            dash.style.display = 'flex';
+
+            document.getElementById('user-display-name').innerText = nombre;
+            document.getElementById('user-role-badge').innerText = rol.toUpperCase();
+
+            // Generar tarjetas del menú
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = "";
+
+            const listaPermisos = permisosPorRol[rol];
+
+            listaPermisos.forEach(key => {
+                const item = casosDeUso[key];
+                const card = document.createElement('div');
+                card.className = 'menu-card';
+                card.innerHTML = `
+                    <div class="card-icon">${item.icon}</div>
+                    <div class="card-title">${item.titulo}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Cerrar sesión
+        function logout() {
+            document.getElementById('dashboard-screen').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+    </script>
+</body>
+</html>

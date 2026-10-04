@@ -1,0 +1,272 @@
+/* =========================================================
+   PALETA DE COLORES (Gris y Blanco) Y TIPOGRAFÍA
+   ========================================================= */
+:root {
+    --bg-main: #f4f4f5;         /* Gris muy claro de fondo */
+    --bg-card: #ffffff;         /* Blanco puro */
+    --text-dark: #18181b;       /* Gris casi negro para textos */
+    --text-muted: #71717a;      /* Gris medio para descripciones */
+    --border-color: #e4e4e7;    /* Gris claro para bordes */
+    --accent-grey: #27272a;     /* Gris oscuro para botones y encabezados */
+    --hover-grey: #3f3f46;      /* Gris interactivo */
+    --light-grey: #fafafa;
+}
+
+/* Reglas Generales de Tipografía */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================================================
+   PANTALLA DE LOGIN
+   ========================================================= */
+.login-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    background: linear-gradient(135deg, #e4e4e7 0%, #f4f4f5 100%);
+}
+
+.login-card {
+    background-color: var(--bg-card);
+    width: 100%;
+    max-width: 450px;
+    padding: 35px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.login-header h1 {
+    font-size: 1.8rem;
+    color: var(--accent-grey);
+    margin-bottom: 5px;
+}
+
+.login-header p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Pestañas / Modos de acceso */
+.access-types {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 8px;
+    background: none;
+    border: none;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+    color: var(--accent-grey);
+    border-bottom: 3px solid var(--accent-grey);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--accent-grey);
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background-color: var(--light-grey);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus, .form-group select:focus {
+    border-color: var(--accent-grey);
+    background-color: var(--bg-card);
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--accent-grey);
+    color: var(--bg-card);
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+}
+
+.btn-primary:hover {
+    background-color: var(--hover-grey);
+}
+
+.btn-public {
+    background-color: #52525b;
+}
+
+.error-msg {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 10px;
+    text-align: center;
+    display: none;
+}
+
+/* =========================================================
+   ESTRUCTURA DEL MENÚ (DASHBOARD)
+   ========================================================= */
+.dashboard-screen {
+    display: none;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-badge {
+    background-color: var(--bg-main);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent-grey);
+    border: 1px solid var(--border-color);
+}
+
+.btn-logout {
+    background: none;
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+
+.btn-logout:hover {
+    background-color: var(--accent-grey);
+    color: var(--bg-card);
+}
+
+main {
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.section-title {
+    margin-bottom: 25px;
+}
+
+.section-title h2 {
+    font-size: 1.5rem;
+    color: var(--accent-grey);
+}
+
+.section-title p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Grid de Tarjetas del Menú */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.menu-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 25px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.menu-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.08);
+    border-color: var(--accent-grey);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+
+.card-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--accent-grey);
+}
+
+/* =========================================================
+   ANIMACIONES
+   ========================================================= */
+.fade-in {
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.hidden {
+    display: none !important;
+}
